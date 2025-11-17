@@ -2,8 +2,8 @@ name: Update ICS daily
 
 on:
   schedule:
-    - cron: "0 3 * * *"  # Her gün 03:00 UTC (Türkiye'de 06:00 civarı)
-  workflow_dispatch:      # Elle çalıştırma butonu
+    - cron: "0 3 * * *"   # Her gün 03:00 UTC (Türkiye'de ~06:00)
+  workflow_dispatch:       # Elle çalıştırma butonu
 
 jobs:
   build:
@@ -13,8 +13,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # tüm geçmişi indir, yoksa push reddedilir
-
+          fetch-depth: 0          # Tüm geçmişi indir (push reddini önler)
+          persist-credentials: true
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -30,13 +30,14 @@ jobs:
       - name: Generate ICS
         run: |
           python generate_ics.py
-          
+
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add sanliurfa_namaz_vakitleri.ics
           git commit -m "Update ICS $(date -u +'%Y-%m-%d %H:%M:%S UTC')" || echo "No changes"
+          git pull --rebase origin main
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
