@@ -35,3 +35,7 @@ jobs:
           git add sanliurfa_namaz_vakitleri.ics
           git commit -m "Update ICS $(date -u +'%Y-%m-%d %H:%M:%S UTC')" || echo "No changes"
           git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          
